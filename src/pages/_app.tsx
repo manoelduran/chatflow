@@ -1,10 +1,16 @@
 import '@/src/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SocketProvider } from '../contexts/socket'
+import { AuthProvider } from '../contexts/auth'
+import { ChatProvider } from '../contexts/chat'
 
 export default function App({ Component, pageProps }: AppProps) {
   return  (
-  <SocketProvider>
+  <AuthProvider>
+    <SocketProvider>
+  <ChatProvider>
   <Component {...pageProps} />
-</SocketProvider> )
+  </ChatProvider>
+</SocketProvider> 
+  </AuthProvider>)
 }
