@@ -18,20 +18,24 @@ const ChatProvider = ({children}: any) => {
 
     const chatList = useCallback(async () => {
         const response = await api.get<ChatEntity[]>("/chats")
+        console.log("response", response)
         setChats(response.data);
         return response.data
     }, []);
     const handleCreateChat = useCallback(async ({name, token}: CreateChatDTO) => {
-        const response = await api.post("/chats", {name: name}, { headers: { Authorization: `Bearer ${token}` } })
-
-        setChats([...chats, response.data]);
+         await api.post("/chats", {name: name})
+       await chatList()
     }, []);
     const handleJoinChat = useCallback(async(data: JoinChatDTO) => {
         const response = await api.post(`/join/${data.chat_id}`)
     }, []);
+    useEffect(() => {
+        chatList()
+    }, [])
     return (
         <ChatContext.Provider value={{ chats, createChat: handleCreateChat, joinChat: handleJoinChat, chatList }}>{children}</ChatContext.Provider>
     );
+
 };
 
 function useChat(): ChatContextData {
