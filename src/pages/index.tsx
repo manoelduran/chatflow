@@ -11,34 +11,14 @@ import { SignInDTO } from '../dtos/user/SignInDTO';
 
 
 export default function Home() {
-  const { socket } = useSocket()
+ 
   const { signIn } = useAuth()
   const router = useRouter();
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false)
-  const handleMessage = () => {
-    console.log(message)
-    socket?.emit("message", { message })
-
-    api.post("/send", { message })
-  }
-  const hello = () => {
-    socket?.on("hello", (arg) => {
-      console.log(arg); // true
-    });
-    socket?.emit("pao", "ovo")
-    socket?.on("disconnect", () => {
-      console.log(socket?.connected); // false
-    }
-    )
-  };
-  useEffect(() => {
-    if (socket !== undefined) {
-      hello()
-    }
-  }, [socket])
+  
   const handleSignIn = useCallback(async (event: React.FormEvent) => {
     try {
       event.preventDefault();
@@ -87,7 +67,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <AnimatedButton type="submit" style="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" path='/home' text='Sign In' />
+              <AnimatedButton type="submit" style="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  text='Sign In' />
             </div>
           </form>
           <AnimatedButton type="button" path='/create-user' text=' Create Account' />

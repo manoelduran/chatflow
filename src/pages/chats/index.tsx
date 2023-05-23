@@ -2,15 +2,32 @@ import AnimatedButton from '@/src/components/AnimatedButton';
 import AnimatedCard from '@/src/components/AnimatedCard';
 import { useAuth } from '@/src/contexts/auth';
 import { useChat } from '@/src/contexts/chat';
+import { useSocket } from '@/src/contexts/socket';
+import { api } from '@/src/services/api';
 import { useRouter } from 'next/router';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const Chats: React.FC = () => {
   //  const [chats, setChats] = useState<string[]>([]);
-
+  const { socket } = useSocket();
   const router = useRouter();
   const { chats, joinChat, chatList } = useChat()
   const { user } = useAuth();
+  const hello = () => {
+    socket?.on("hello", (arg) => {
+      console.log(arg); // true
+    });
+    socket?.emit("pao", "ovo")
+    socket?.on("disconnect", () => {
+      console.log(socket?.connected); // false
+    }
+    )
+  };
+  useEffect(() => {
+    if (socket !== undefined) {
+      hello();
+    }
+  }, [socket])
   const handleEnterChat = useCallback( (chat_id: string | undefined) => {
     if (chat_id) {
       router.push(`/chat/${chat_id}`);
@@ -22,6 +39,11 @@ const Chats: React.FC = () => {
       console.log(`Joining ${chat_id}`);
     }
   }, []);
+  useEffect(() => {
+    if(!user.token) {
+      router.push(`/`);
+    }
+  }, [user])
   console.log('USER', user)
   console.log('CHATS', chats)
   const list = useMemo(() => {
