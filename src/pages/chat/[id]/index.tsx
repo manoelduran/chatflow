@@ -1,9 +1,11 @@
+import { useSocket } from '@/src/contexts/socket';
 import { ChatEntity } from '@/src/dtos/chat/ChatEntity';
 import { api } from '@/src/services/api';
 import React, { useState, useRef, useEffect } from 'react';
 
 const Chat: React.FC = (params) => {
     console.log('params', params)
+    const { socket } = useSocket();
   const [messages, setMessages] = useState<string[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
@@ -11,6 +13,9 @@ const Chat: React.FC = (params) => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== '') {
+      console.log(newMessage)
+      socket?.emit("message", { newMessage })
+      api.post("/send", { newMessage })
       setMessages([...messages, newMessage]);
       setNewMessage('');
     }
@@ -54,13 +59,13 @@ const Chat: React.FC = (params) => {
   );
 };
 
-export async function generateStaticParams() {
+/*export async function generateStaticParams() {
     const response = await  api.get("/chat")
     const chats = response.data as ChatEntity[];
     console.log('chatss', chats)
     return chats.map((chat: ChatEntity) => ({
         id: chat.id,
       }));
-  }
+  }*/
 
 export default Chat;
