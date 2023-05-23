@@ -18,12 +18,9 @@
 }
 
 body {
-
+width: 100%;
+  height: 100vh;
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
+  background: 
     rgb(var(--background-start-rgb));
 }
