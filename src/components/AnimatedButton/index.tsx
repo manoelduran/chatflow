@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 
 interface AnimatedButtonProps {
-  path: string;
+  path?: string;
   text: string;
   style?: string;
   type: "button" | "submit" | "reset" | undefined;
@@ -13,7 +13,9 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({ path, text, type, style
   const router = useRouter();
 
   const handleButtonClick = useCallback(() => {
-    router.push(path);
+    if(path) {
+      router.push(path);
+    }
   }, [path]);
 
   return (
