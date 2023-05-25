@@ -1,6 +1,5 @@
 import AnimatedButton from '@/src/components/AnimatedButton';
 import { useAuth } from '@/src/contexts/auth';
-import { api } from '@/src/services/api';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 
@@ -17,7 +16,7 @@ const CreateUser: React.FC = () => {
      setLoading(true)
      e.preventDefault();
      const parsedData =  { email, username, password }
-     const response = await signUp(parsedData)
+     await signUp(parsedData)
      router.push('/chats');
      setEmail('');
      setUsername('');
@@ -31,8 +30,13 @@ const CreateUser: React.FC = () => {
    }, [email, username, password, loading]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <div className="w-full  min-h-screen px-10 py-10 flex flex-col items-center bg-gray-100">
+       <div className="w-full flex items-center justify-end">
+       <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  text='Back' />
+       </div>
+
+    <div className="flex items-center justify-center pt-20 bg-gray-100">
+      <div className="bg-white shadow-md rounded-md px-8 pt-6 pb-8 mb-4">
         <h2 className="text-2xl font-bold mb-6">Create Account</h2>
         <form className="space-y-4" onSubmit={handleSignUp}>
           <div>
@@ -72,10 +76,11 @@ const CreateUser: React.FC = () => {
             />
           </div>
           <div>
-          <AnimatedButton type="submit" style="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" path='/create-chat' text=' Create' />
+          <AnimatedButton type="submit" style="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" text=' Create' />
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 };

@@ -66,11 +66,11 @@ export default function Home() {
                 placeholder="Enter your password"
               />
             </div>
-            <div>
+            <div className="py-3">
               <AnimatedButton type="submit" style="w-full bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  text='Sign In' />
             </div>
           </form>
-          <AnimatedButton type="button" path='/create-user' text=' Create Account' />
+          <AnimatedButton type="button"  path='/create-user' text=' Create Account' />
         </div>
       )
       }

@@ -11,8 +11,9 @@ const Chats: React.FC = () => {
   //  const [chats, setChats] = useState<string[]>([]);
   const { socket } = useSocket();
   const router = useRouter();
-  const { chats, joinChat, chatList } = useChat()
-  const { user } = useAuth();
+  const { chats, joinChat } = useChat()
+  const { user, load } = useAuth();
+  console.log('user', user)
   const hello = () => {
     socket?.on("hello", (arg) => {
       console.log(arg); // true
@@ -23,29 +24,33 @@ const Chats: React.FC = () => {
     }
     )
   };
-  useEffect(() => {
-    if (socket !== undefined) {
-      hello();
-    }
-  }, [socket])
+
   const handleEnterChat = useCallback( (chat_id: string | undefined) => {
     if (chat_id) {
       router.push(`/chat/${chat_id}`);
     }
   }, []);
+  useEffect(() => {
+    if (socket !== undefined) {
+      hello();
+    }
+  }, [socket])
   const handleJoinChat = useCallback(async (chat_id: string | undefined) => {
     if (chat_id) {
       await joinChat({ chat_id })
       console.log(`Joining ${chat_id}`);
     }
   }, []);
-  useEffect(() => {
-    if(!user.token) {
-      router.push(`/`);
-    }
-  }, [user])
-  console.log('USER', user)
-  console.log('CHATS', chats)
+  const  existsUserToken = async () => {
+
+   const getToken = localStorage.getItem('@Chatflow:Token');
+   console.log('getToken', getToken)
+   if(!getToken) {
+    router.push(`/`);
+   };
+  }
+
+
   const list = useMemo(() => {
     if (!chats) {
       return []
@@ -55,9 +60,12 @@ const Chats: React.FC = () => {
   return (
     <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
       <div className="w-full h-100 flex items-start justify-between">
-        <h1 className="text-2xl font-bold mb-6">ChatFlow</h1>
-        <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" path='/create-chat' text=' Create Chat' />
+        <h1 className="text-2xl font-bold mb-6 ">ChatFlow</h1>
       </div>
+      <div className="w-full h-100 flex items-start justify-end ">
+        <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" path='/create-chat' text='Create Chat' />
+        <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 ml-5 rounded focus:outline-none focus:shadow-outline" path='/' text='Logout' />
+        </div>
       <div className="w-full h-100 flex items-start justify-between">
         <span className="text-2xl font-bold mb-6">Want to talk with someone? Just create your chat and enjoy!</span>
       </div>

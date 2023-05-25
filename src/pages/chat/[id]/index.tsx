@@ -1,3 +1,4 @@
+import AnimatedButton from '@/src/components/AnimatedButton';
 import { useSocket } from '@/src/contexts/socket';
 import { ChatEntity } from '@/src/dtos/chat/ChatEntity';
 import { api } from '@/src/services/api';
@@ -28,7 +29,10 @@ const Chat: React.FC = (params) => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
+        <div className="w-full flex items-center justify-end">
+    <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"  text='Back' />
+    </div>
       <div className="bg-white shadow-md rounded px-8 py-6 mb-8">
         <h2 className="text-2xl font-bold mb-6">Chat Title</h2>
         <div
@@ -59,13 +63,13 @@ const Chat: React.FC = (params) => {
   );
 };
 
-/*export async function generateStaticParams() {
+export async function generateStaticParams() {
     const response = await  api.get("/chat")
     const chats = response.data as ChatEntity[];
     console.log('chatss', chats)
     return chats.map((chat: ChatEntity) => ({
         id: chat.id,
       }));
-  }*/
+  }
 
 export default Chat;

@@ -6,6 +6,7 @@ import { UserEntity } from '../../dtos/user/UserEntity';
 import { AuthDTO } from '@/src/dtos/user/AuthDTO';
 import { SignUpDTO } from '@/src/dtos/user/SignUpDTO';
 
+
 interface TokenData {
     iat: number;
     exp: number;
@@ -19,7 +20,7 @@ interface AuthContextData {
     signIn: (data: SignInDTO) => Promise<AuthDTO>;
     signUp: (data: SignUpDTO) => Promise<void>;
     load: () => Promise<void>
-    signOut: (data: string) => void;
+    signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -27,12 +28,12 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const AuthProvider = ({ children }: any) => {
 
     const [authUser, setAuthUser] = useState<AuthDTO>({} as AuthDTO);
-
     const handleSignUp = useCallback(async (data: SignUpDTO) => {
         await api.post("/users", data)
     }, [])
     async function loadData() {
         try {
+            
             const token =  localStorage.getItem('@Chatflow:Token');
             const refreshToken =  localStorage.getItem('@Chatflow:refreshToken');
 
@@ -54,14 +55,15 @@ const AuthProvider = ({ children }: any) => {
             } else {
                 api.defaults.headers.authorization = `Bearer ${token}`;
             }
-
             const response = await api.get<UserEntity>(`users/show/${owner_id}`);
             setAuthUser({
                 token: accessToken as string,
                 user: { ...response?.data },
             });
-        } catch (error) {
-            //handleSignOut();
+        } catch (error: any) {
+            if(error?.response?.status === 401) {
+                handleSignOut();
+            }
         }
     }
     const handleSignIn = useCallback(async (data: SignInDTO) => {
@@ -76,6 +78,7 @@ const AuthProvider = ({ children }: any) => {
         localStorage.removeItem("@Chatflow:Token")
         localStorage.removeItem('@Chatflow:refreshToken')
         setAuthUser({} as AuthDTO);
+
     }, []);
     useEffect(() => {
         loadData()
