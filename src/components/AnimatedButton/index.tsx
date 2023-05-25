@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useAuth } from '@/src/contexts/auth';
 
 interface AnimatedButtonProps {
   path?: string;
@@ -10,9 +11,16 @@ interface AnimatedButtonProps {
 
 const AnimatedButton: React.FC<AnimatedButtonProps> = ({ path, text, type, style }: AnimatedButtonProps) => {
   const [hovered, setHovered] = useState(false);
+  const { signOut } = useAuth();
   const router = useRouter();
 
   const handleButtonClick = useCallback(() => {
+    if(text === 'Logout') {
+      signOut()
+    }
+    if(text === 'Back') {
+      router.back()
+    }
     if(path) {
       router.push(path);
     }
