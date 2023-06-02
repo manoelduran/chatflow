@@ -2,10 +2,16 @@ import AnimatedButton from '@/src/components/AnimatedButton';
 import { useSocket } from '@/src/contexts/socket';
 import { ChatEntity } from '@/src/dtos/chat/ChatEntity';
 import { api } from '@/src/services/api';
+import { GetServerSideProps, NextPage } from 'next';
+import { ParsedUrlQuery } from 'querystring';
 import React, { useState, useRef, useEffect } from 'react';
 
-const Chat: React.FC = (params) => {
-    console.log('params', params)
+type ChatProps = {
+  chat: ChatEntity;
+};
+
+const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
+    console.log('chat', chat)
     const { socket } = useSocket();
   const [messages, setMessages] = useState<string[]>([]);
   const [newMessage, setNewMessage] = useState('');
@@ -61,6 +67,30 @@ const Chat: React.FC = (params) => {
       </div>
     </div>
   );
+};
+
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const chat_id = context.params.id as ParsedUrlQuery | undefined;
+
+  try {
+
+    const { data } = await api.get(`/chats/show/${chat_id}`);
+
+    return {
+      props: {
+        chat: data,
+      },
+    };
+  } catch (err) {
+  console.log('error', err)
+  return {
+    redirect: {
+        destination: '/',
+        statusCode: 307
+    }
+}
+  }
 };
 
 export async function generateStaticParams() {
