@@ -2,6 +2,7 @@ import AnimatedButton from '@/src/components/AnimatedButton';
 import AnimatedCard from '@/src/components/AnimatedCard';
 import { useAuth } from '@/src/contexts/auth';
 import { useChat } from '@/src/contexts/chat';
+import { useMessage } from '@/src/contexts/message';
 import { useSocket } from '@/src/contexts/socket';
 import { api } from '@/src/services/api';
 import { useRouter } from 'next/router';
@@ -11,6 +12,7 @@ const Chats: React.FC = () => {
   //  const [chats, setChats] = useState<string[]>([]);
   const { socket } = useSocket();
   const router = useRouter();
+  const {fetchChatId} = useMessage();
   const { chats, joinChat } = useChat()
   const { user, load } = useAuth();
   console.log('user', user)
@@ -27,6 +29,7 @@ const Chats: React.FC = () => {
 
   const handleEnterChat = useCallback( (chat_id: string | undefined) => {
     if (chat_id) {
+      fetchChatId({chat_id})
       router.push(`/chat/${chat_id}`);
     }
   }, []);
@@ -41,15 +44,6 @@ const Chats: React.FC = () => {
       console.log(`Joining ${chat_id}`);
     }
   }, []);
-  const  existsUserToken = async () => {
-
-   const getToken = localStorage.getItem('@Chatflow:Token');
-   console.log('getToken', getToken)
-   if(!getToken) {
-    router.push(`/`);
-   };
-  }
-
 
   const list = useMemo(() => {
     if (!chats) {
