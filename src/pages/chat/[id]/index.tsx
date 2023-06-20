@@ -33,10 +33,10 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         text: data.message,
         chat_id: chat.id
       } as CreateMessageDTO
-        console.log(parsedData)
-         await createMessage(parsedData)
-        socket?.emit("message", { parsedData })
-    } catch(error: any) {
+      console.log(parsedData)
+      await createMessage(parsedData)
+      socket?.emit("message", { parsedData })
+    } catch (error: any) {
       console.log('error', error)
       formRef.current?.setErrors(error);
     } finally {
@@ -45,7 +45,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
   }, []);
 
 
-  const list = useMemo( () => {
+  const list = useMemo(() => {
     if (!messages) {
       return []
     }
@@ -62,22 +62,22 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         <div
           className="max-h-64 overflow-y-auto bg-gray-200 p-4 mb-4"
         >
-          {list && list?.map((message, index) => 
+          {list && list?.map((message, index) =>
             <>
-            <p key={message.id}>{message.text}</p>
-            <p>{message.sentAt?.toString()}</p>
+              <p key={message.id}>{message.text}</p>
+              <p>{message.sentAt?.toString()}</p>
             </>
           )}
         </div>
-        {sending ? <LoadingAnimation/> : (<div className="flex">
-        <Form ref={formRef} className="space-y-4" onSubmit={handleSendMessage}>
-          <Input
-          name='message'
-          placeholder='Type a message.'
-          />
-          <div>
-          <AnimatedButton type="submit" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded-r focus:outline-none focus:shadow-outline" text='Send' />
-          </div>
+        {sending ? <LoadingAnimation /> : (<div className="flex">
+          <Form ref={formRef} className="space-y-4" onSubmit={handleSendMessage}>
+            <Input
+              name='message'
+              placeholder='Type a message.'
+            />
+            <div>
+              <AnimatedButton type="submit" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded-r focus:outline-none focus:shadow-outline" text='Send' />
+            </div>
           </Form>
         </div>)}
       </div>
@@ -92,7 +92,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   try {
 
     const { data } = await api.get<ChatEntity>(`/chats/show/${chat_id}`);
-console.log('data', data)
+    console.log('data', data)
     return {
       props: {
         chat: data,
