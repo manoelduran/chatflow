@@ -33,13 +33,12 @@ const AuthProvider = ({ children }: any) => {
     }, [])
     async function loadData() {
         try {
-            
             const token =  localStorage.getItem('@Chatflow:Token');
             const refreshToken =  localStorage.getItem('@Chatflow:refreshToken');
 
-            let accessToken = token;
+            let accessToken = JSON.parse(token as string);
 
-            const { sub, email, owner_id, username, exp } = decode<TokenData>(token as string);
+            const { sub, email, owner_id, username, exp } = decode<TokenData>(JSON.parse(token as string));
             if (Date.now() >= exp * 1000) {
                 api.defaults.headers.authorization = `Bearer ${refreshToken}`;
 
@@ -48,17 +47,19 @@ const AuthProvider = ({ children }: any) => {
                     owner_id,
                 });
 
-                localStorage.setItem('@user:refreshToken', response.data);
-                localStorage.setItem('@Flimed:token', refreshToken);*/
-
+                */
+               // localStorage.setItem('@Chatflow:refreshToken', response.data);
+                //localStorage.setItem('@Chatflow:Token', refreshToken);
                 accessToken = refreshToken;
             } else {
                 api.defaults.headers.authorization = `Bearer ${token}`;
             }
+
             const response = await api.get<UserEntity>(`users/show/${owner_id}`);
+
             setAuthUser({
                 token: accessToken as string,
-                user: { ...response?.data },
+                user:  response?.data ,
             });
         } catch (error: any) {
             if(error?.response?.status === 401) {
@@ -68,10 +69,12 @@ const AuthProvider = ({ children }: any) => {
     }
     const handleSignIn = useCallback(async (data: SignInDTO) => {
         const response = await api.post("/users/auth", data)
+        console.log('response xxxx', response)
         localStorage.setItem("@Chatflow:Token", JSON.stringify(response.data.value.token))
         localStorage.setItem('@Chatflow:refreshToken', JSON.stringify(response.data.value.refreshToken))
         api.defaults.headers.authorization = `Bearer ${response.data.value.token}`;
         setAuthUser(response.data.value);
+  
         return response.data.value
     }, []);
     const handleSignOut = useCallback(() => {
