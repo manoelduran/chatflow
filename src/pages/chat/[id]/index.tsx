@@ -1,5 +1,6 @@
 import AnimatedButton from '@/src/components/AnimatedButton';
 import { Input } from '@/src/components/Input';
+import * as Yup from 'yup';
 import LoadingAnimation from '@/src/components/LoadingAnimation';
 import { useAuth } from '@/src/contexts/auth';
 import { useMessage } from '@/src/contexts/message';
@@ -14,18 +15,21 @@ import { format } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { canCreateMessage } from './validations';
+import getValidationErrors from '@/src/utils/getValidationErrors';
 
 type ChatProps = {
   chat: ChatEntity;
 };
 
 interface FormCredentials {
-  message: string;
+  text: string;
 }
 const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
   const formRef = useRef<FormHandles>(null);
   const { user } = useAuth()
-  const { messages, createMessage } = useMessage()
+
+  const { messages, createMessage, listMessagesByChat } = useMessage()
   const { socket } = useSocket();
   const [sending, setSending] = useState(false);
 
@@ -33,36 +37,52 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
     setSending(true)
     try {
       formRef.current?.setErrors([]);
+      await canCreateMessage(data)
+      console.log('user', user)
       const parsedData = {
-        text: data.message,
-        chat_id: chat.id
+        text: data.text,
+        chat_id: chat.id,
+        token: user.token
       } as CreateMessageDTO
       console.log(parsedData)
+  console.log('parsedData', parsedData)
       await createMessage(parsedData)
       socket?.emit("message", { parsedData })
-    } catch (error: any) {
+    } catch (error) {
       console.log('error', error)
-      formRef.current?.setErrors(error);
+      if (error instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(error);
+
+        formRef.current?.setErrors(errors);
+
+        return;
+      }
+      setSending(false)
     } finally {
       setSending(false)
     }
-  }, []);
-
-
+  }, [sending]);
   const list = useMemo(() => {
     if (!messages) {
       return []
     }
     return messages?.value?.map((message: MessageEntity) => {
-      console.log('x', message)
+      console.log('user 444', user)
       return {
         ...message,
-        myMessage: message.userId === user?.user?.value?.id && message.text,
-        othersMessages: message.userId !== user?.user?.value?.id && message.text,
+        myMessage: message.userId === user?.user?.id && message.text,
+        othersMessages: message.userId !== user?.user?.id && message.text,
         formattedSendAt: format(new Date(message?.sentAt), 'HH:mm')
       }
     })
-  }, [messages])
+  }, [messages, user])
+  useEffect(() => {
+    if(chat) {
+      listMessagesByChat({chat_id: chat.id as string})
+    }
+  }, [chat]);
+
+
   console.log('list', list)
   return (
     <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
@@ -74,21 +94,22 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         <div
           className="w-full max-h-64 overflow-y-auto bg-gray-200 p-4 mb-4"
         >
-          {list && list?.map((message, index) => (
+          {list && user && list?.map((message, index) => (
             <>
-              {message.userId === user?.user?.value?.id ? (
+              {message.userId === user?.user?.id ? (
                 <div key={message.id} className="w-full h-fit  align-middle flex justify-end  mb-4">
                   <div className="w-fit flex  flex-col  bg-green-200 align-middle rounded-lg py-2 px-4 text-gray-800">
-                  <p  >{user?.user?.value?.username}</p>
+                    <p  >{user?.user?.username}</p>
                     <p  >{message.myMessage}</p>
-                    <p className="px-1">{message.formattedSendAt}</p>
+                    <p className="text-end">{message.formattedSendAt}</p>
                   </div>
                 </div>
               ) : (
                 <div key={message.id} className="w-fit flex flex-col justify-start  mb-4">
                   <div className="bg-red-200  rounded-lg py-2 px-4 text-gray-800 mb-1">
+                  <p  >{user?.user?.username}</p>
                     <p >{message.othersMessages}</p>
-                    <p className="px-1">{message.formattedSendAt}</p>
+                    <p className="text-end">{message.formattedSendAt}</p>
                   </div>
 
                 </div>
@@ -99,7 +120,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         {sending ? <LoadingAnimation /> : (<div className="flex">
           <Form ref={formRef} className="space-y-4" onSubmit={handleSendMessage}>
             <Input
-              name='message'
+              name='text'
               placeholder='Type a message.'
             />
             <div>
