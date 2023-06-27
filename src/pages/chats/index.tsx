@@ -15,7 +15,6 @@ const Chats: React.FC = () => {
   const {fetchChatId} = useMessage();
   const { chats, joinChat } = useChat()
   const { user, load } = useAuth();
-  console.log('user', user)
   const hello = () => {
     socket?.on("hello", (arg) => {
       console.log(arg); // true
@@ -33,6 +32,7 @@ const Chats: React.FC = () => {
       router.push(`/chat/${chat_id}`);
     }
   }, []);
+  console.log('useruseruseruseruseruseruseruser', user)
   useEffect(() => {
     if (socket !== undefined) {
       hello();
@@ -50,7 +50,7 @@ const Chats: React.FC = () => {
       return []
     }
     return chats
-  }, [chats])
+  }, [chats, user])
   return (
     <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
       <div className="w-full h-100 flex items-start justify-between">
