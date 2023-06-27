@@ -23,11 +23,11 @@ const ChatProvider = ({children}: any) => {
         return response.data
     }, []);
     const handleCreateChat = useCallback(async ({name, token}: CreateChatDTO) => {
-         await api.post("/chats", {name: name})
+         await api.post("/chats", {name: name}, {headers: {Authorization: `Baerer ${token}`}})
        await chatList()
     }, []);
     const handleJoinChat = useCallback(async(data: JoinChatDTO) => {
-        const response = await api.post(`/join/${data.chat_id}`)
+         await api.post(`/join/${data.chat_id}`)
     }, []);
     useEffect(() => {
         chatList()
