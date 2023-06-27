@@ -31,7 +31,7 @@ const MessageProvider = ({children}: any) => {
        console.log("response da list", response.data)
        setMessages(response.data);
        return response.data;
-    }, [messages]);
+    }, [messages, chatId]);
     const handleFetchChatId = useCallback(async (data: FetchChatIdDTO) => {
         if(data.chat_id) {
             setChatId(data.chat_id);
