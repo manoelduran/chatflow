@@ -39,7 +39,7 @@ const MessageProvider = ({children}: any) => {
     }, [])
     const handleCreateMessage = useCallback(async (data: CreateMessageDTO) => {
         console.log('data', data)
-        const response = await api.post(`/messages/${data.chat_id}`, {text: data.text})
+        const response = await api.post(`/messages/${data.chat_id}`, {text: data.text}, {headers: {Authorization: `Baerer ${data.token}`}})
         console.log('response do create', response)
         if(response.status === 201) {
             messagesByChat({chat_id: data.chat_id})
@@ -51,11 +51,7 @@ const MessageProvider = ({children}: any) => {
     const handleEditMessage = useCallback(async(data: EditMessageDTO) => {
         const response = await api.post(`/join/${data.chat_id}`)
     }, []);
-    useEffect(() => {
-        if(chatId) {
-          messagesByChat({chat_id: chatId})
-        }
-      }, [chatId]);
+
     return (
         <MessageContext.Provider value={{ messages, chatId, fetchChatId: handleFetchChatId, createMessage: handleCreateMessage, editMessage: handleEditMessage, deleteMessage: handleDeleteMessage, listMessagesByChat: messagesByChat }}>{children}</MessageContext.Provider>
     );
