@@ -1,18 +1,16 @@
-import { Inter } from 'next/font/google'
-import socket from '../services/socket'
-import { useSocket } from '../contexts/socket'
-import { api } from '../services/api';
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import LoadingAnimation from '../components/LoadingAnimation';
 import AnimatedButton from '../components/AnimatedButton';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/auth';
 import { SignInDTO } from '../dtos/user/SignInDTO';
+import { useSocket } from '../contexts/socket';
 
 
 export default function Home() {
  
-  const { signIn } = useAuth()
+  const { signIn } = useAuth();
+  const {authenticate} = useSocket();
   const router = useRouter();
   const [email, setEmail] = useState('');
 
@@ -26,6 +24,7 @@ export default function Home() {
       const parsedData = { email, password } as SignInDTO;
       const response = await signIn(parsedData)
       if (response.token) {
+        authenticate(response)
         router.push('/chats');
       }
     } catch (error) {

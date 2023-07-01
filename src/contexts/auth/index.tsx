@@ -69,7 +69,6 @@ const AuthProvider = ({ children }: any) => {
     }
     const handleSignIn = useCallback(async (data: SignInDTO) => {
         const response = await api.post("/users/auth", data)
-        console.log('response xxxx', response)
         localStorage.setItem("@Chatflow:Token", JSON.stringify(response.data.value.token))
         localStorage.setItem('@Chatflow:refreshToken', JSON.stringify(response.data.value.refreshToken))
         api.defaults.headers.authorization = `Bearer ${response.data.value.token}`;

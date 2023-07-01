@@ -10,12 +10,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 const Chats: React.FC = () => {
   //  const [chats, setChats] = useState<string[]>([]);
-  const { socket } = useSocket();
+  const { socket, join } = useSocket();
   const router = useRouter();
   const {fetchChatId} = useMessage();
   const { chats, joinChat } = useChat()
   const { user, load } = useAuth();
-  const hello = () => {
+/*  const hello = () => {
     socket?.on("hello", (arg) => {
       console.log(arg); // true
     });
@@ -24,23 +24,24 @@ const Chats: React.FC = () => {
       console.log(socket?.connected); // false
     }
     )
-  };
+  };*/
 
   const handleEnterChat = useCallback( (chat_id: string | undefined) => {
     if (chat_id) {
       fetchChatId({chat_id})
+      join({chat_id , user})
       router.push(`/chat/${chat_id}`);
     }
   }, []);
-  console.log('useruseruseruseruseruseruseruser', user)
-  useEffect(() => {
+  /*useEffect(() => {
     if (socket !== undefined) {
       hello();
     }
-  }, [socket])
+  }, [socket])*/
   const handleJoinChat = useCallback(async (chat_id: string | undefined) => {
     if (chat_id) {
       await joinChat({ chat_id })
+      join({chat_id , user})
       console.log(`Joining ${chat_id}`);
     }
   }, []);

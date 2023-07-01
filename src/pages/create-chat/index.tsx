@@ -10,13 +10,15 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useRef, useState } from 'react';
 import { canCreateChat } from './validations';
 import LoadingAnimation from '@/src/components/LoadingAnimation';
+import { useSocket } from '@/src/contexts/socket';
 interface formCredentials {
 text: string;
 }
 const CreateChat: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const router = useRouter();
-  const { user } = useAuth()
+  const { user } = useAuth();
+  const {create} = useSocket();
   console.log('user', user)
   const { createChat } = useChat()
   const [loading, setLoading] = useState(false)
@@ -26,6 +28,7 @@ const CreateChat: React.FC = () => {
       formRef.current?.setErrors([]);
       await canCreateChat(data)
       await createChat({ name: data.text, token: user.token as string })
+      create({data, user})
       router.push('/chats');
     } catch (error) {
       console.log('error', error)
