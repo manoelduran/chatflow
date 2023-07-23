@@ -5,33 +5,31 @@ import { CreateChatDTO } from '@/src/dtos/chat/CreateChatDTO';
 import { JoinChatDTO } from '@/src/dtos/chat/JoinChatDTO';
 
 interface ChatContextData {
-    chats?: ChatEntity[];
+    chats?: {chat: ChatEntity, totalUsers: number, owner: string}[];
     createChat: (data: CreateChatDTO) => Promise<void>;
     joinChat: (data: JoinChatDTO) => Promise<void>;
-    chatList: () => Promise<ChatEntity[]>
+    chatList: () => Promise<{chat: ChatEntity, totalUsers: number, owner: string}[]>
 }
 
 const ChatContext = createContext<ChatContextData>({} as ChatContextData);
 
 const ChatProvider = ({children}: any) => {
-    const [chats, setChats] = useState<ChatEntity[]>([] as ChatEntity[]);
+    const [chats, setChats] = useState<{chat: ChatEntity, totalUsers: number, owner: string}[]>([] as {chat: ChatEntity, totalUsers: number,owner: string}[]);
 
     const chatList = useCallback(async () => {
-        const response = await api.get<ChatEntity[]>("/chats")
-        console.log("response", response)
-        setChats(response.data);
-        return response.data
+        const response = await api.get<{chat: ChatEntity, totalUsers: number,owner: string}[]>("/chats")
+        console.log('response', response)
+        setChats(response.data.value);
+        return response.data.value
     }, []);
     const handleCreateChat = useCallback(async ({name, token}: CreateChatDTO) => {
          await api.post("/chats", {name: name}, {headers: {Authorization: `Baerer ${token}`}})
        await chatList()
     }, []);
     const handleJoinChat = useCallback(async(data: JoinChatDTO) => {
-         await api.post(`/join/${data.chat_id}`)
+         await api.post(`/chats/join/${data.chat_id}`)
     }, []);
-    useEffect(() => {
-        chatList()
-    }, [])
+ useEffect(() => {chatList()}, [])
     return (
         <ChatContext.Provider value={{ chats, createChat: handleCreateChat, joinChat: handleJoinChat, chatList }}>{children}</ChatContext.Provider>
     );

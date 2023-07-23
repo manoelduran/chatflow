@@ -1,16 +1,14 @@
-import { useAuth } from '@/src/contexts/auth';
-import React, { useEffect, useState } from 'react';
+import React  from 'react';
 
 interface AnimatedCardProps {
     name: string;
-    totalUsers: number;
     createdBy: string;
+    totalUsers: number;
     enter: () => void;
-    join: () => Promise<void>;
 }
 
-const AnimatedCard: React.FC<AnimatedCardProps> = ({ name, totalUsers, createdBy, enter, join }) => {
-
+const AnimatedCard: React.FC<AnimatedCardProps> = ({ name, createdBy, enter, totalUsers }) => {
+ 
     return (
         <div className="w-64 h-32 bg-white rounded-lg shadow-md p-4 transform transition hover:scale-105">
             <div className="flex items-center justify-between ">
@@ -18,14 +16,10 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({ name, totalUsers, createdBy
             <h2 className="text-gray-500">Total Users: {totalUsers}</h2>
             </div>
             <p className="text-gray-500 mb-4">Created by: {createdBy}</p>
-            
             <div className="flex justify-around mt-4">
                 {  <button onClick={enter} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-                    Enter
+                Join
                 </button>}
-                <button onClick={join} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                    Join
-                </button>
             </div>
         </div>
     );

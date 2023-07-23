@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useRef, useState } from 'react';
 import { canCreateUser } from './validations';
 import getValidationErrors from '@/src/utils/getValidationErrors';
+import { toast } from 'react-toastify';
 
 const CreateUser: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -22,26 +23,35 @@ const CreateUser: React.FC = () => {
       formRef.current?.setErrors([]);
      await canCreateUser(data)
      await signUp({email: data.email, password: data.password, username: data.username})
-       /*   addToast({
-          title: 'Ocorreu um erro',
-          type: 'error',
-          description: err.response.data.message,
-        });*/
-     router.push('/chats');
+        toast.success("User created successfully!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+     router.push('/');
     } catch (error) {
      console.log('error', error)
      if (error instanceof Yup.ValidationError) {
       const errors = getValidationErrors(error);
       console.log('errors', errors)
       formRef.current?.setErrors(errors);
-
+      toast.error("Try again!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       return;
     }
-    /*   addToast({
-          title: 'Ocorreu um erro',
-          type: 'error',
-          description: err.response.data.message,
-        });*/
     } finally {
      setLoading(false)
 

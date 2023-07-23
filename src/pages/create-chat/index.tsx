@@ -11,6 +11,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { canCreateChat } from './validations';
 import LoadingAnimation from '@/src/components/LoadingAnimation';
 import { useSocket } from '@/src/contexts/socket';
+import { toast } from 'react-toastify';
 interface formCredentials {
 text: string;
 }
@@ -27,8 +28,19 @@ const CreateChat: React.FC = () => {
     try {
       formRef.current?.setErrors([]);
       await canCreateChat(data)
+      console.log('user token', user.token)
       await createChat({ name: data.text, token: user.token as string })
       create({data, user})
+      toast.success("Chat create successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       router.push('/chats');
     } catch (error) {
       console.log('error', error)
@@ -36,7 +48,16 @@ const CreateChat: React.FC = () => {
         const errors = getValidationErrors(error);
         console.log('errors', errors)
         formRef.current?.setErrors(errors);
-
+        toast.error("Try again!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
         return;
       }
     } finally {

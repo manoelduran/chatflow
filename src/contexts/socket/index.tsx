@@ -7,7 +7,7 @@ interface SocketContextData {
     connect: () => void;
     authenticate: (data: any) => void;
     create: (data: any) => void;
-    message: (data: string) => void;
+    message: (data: any) => void;
     join: (data: any) => void;
 }
 
@@ -23,7 +23,7 @@ const SocketProvider = ({children}) => {
             handleConnect()
         }
     }, []);
-    const handleMesssage = useCallback((data: string) => {
+    const handleMesssage = useCallback((data: any) => {
         socketio.emit("message", data)
     }, []);
     const handleCreateRoom = useCallback((data: any) => {

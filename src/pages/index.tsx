@@ -1,10 +1,12 @@
 import { useCallback, useState } from 'react'
 import LoadingAnimation from '../components/LoadingAnimation';
 import AnimatedButton from '../components/AnimatedButton';
+import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/auth';
 import { SignInDTO } from '../dtos/user/SignInDTO';
 import { useSocket } from '../contexts/socket';
+import { toast } from 'react-toastify';
 
 
 export default function Home() {
@@ -25,10 +27,32 @@ export default function Home() {
       const response = await signIn(parsedData)
       if (response.token) {
         authenticate(response)
+   
         router.push('/chats');
       }
+      toast.success("Logged successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error) {
+
       console.log('error', error)
+      toast.error("Try again!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       setLoading(false)
     } finally {
       setLoading(false);
