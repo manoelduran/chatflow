@@ -28,8 +28,8 @@ interface FormCredentials {
 }
 const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
   const formRef = useRef<FormHandles>(null);
-  const { user, signOut } = useAuth()
-  const router = useRouter();
+  const { user, signOut , loading, setLoading, load } = useAuth()
+  
   const { messages, createMessage, listMessagesByChat } = useMessage()
   const { socket, message } = useSocket();
   const [sending, setSending] = useState(false);
@@ -39,16 +39,19 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
     try {
       formRef.current?.setErrors([]);
       await canCreateMessage(data)
+   
 
-      const parsedData = {
-        text: data.text,
-        chat_id: chat.id,
-        token: user.token
-      } as CreateMessageDTO
-      console.log(parsedData)
-
-      await createMessage(parsedData)
-      message(parsedData)
+      if(user) {
+        const parsedData = {
+          text: data.text,
+          chat_id: chat.id,
+          token: user?.token
+        } as CreateMessageDTO
+        console.log('parsedData',parsedData)
+  
+        await createMessage(parsedData)
+        message(parsedData)
+      } 
     } catch (error) {
       console.log('error', error)
       if (error instanceof Yup.ValidationError) {
@@ -58,15 +61,16 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
 
         return;
       }
-      if(error.response.status === 401) {
+      
+      if(error?.response?.status === 401) {
         signOut();
-        router.push(`/`);
+
       }
       setSending(false)
     } finally {
       setSending(false)
     }
-  }, [sending]);
+  }, [sending, loading, user]);
   const list = useMemo(() => {
     if (!messages) {
       return []
@@ -81,12 +85,12 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         formattedSendAt: format(new Date(message?.sentAt), 'HH:mm')
       }
     })
-  }, [messages, user])
+  }, [messages, user, loading])
   
 
 
   useEffect(() => {
-    if(chat ) {
+    if(chat) {
       listMessagesByChat({chat_id: chat.id as string})
     }
   }, [chat]);
@@ -102,22 +106,26 @@ useEffect(() => {
     
     const messageContainer = document?.getElementById('messageContainer')
     const scrollToBottom =  () => {
-      console.log('containerMessage', messageContainer)
       messageContainer?.scrollTo({
        top: messageContainer?.scrollHeight,
        behavior: 'smooth',
      });
    };
-    console.log('messageContainer dentro', messageContainer)
   
     scrollToBottom()
   }
 
 }, [list])
-
-  console.log('list', list)
+useEffect(() => {
+      if(!user) {
+        load()
+        setLoading(false)
+      }
+}, [loading, user])
   return (
-    <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
+    <>
+    {loading ? (    <LoadingAnimation />) : (<>
+      <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
       <div className="w-full flex items-center justify-end">
         <AnimatedButton type="button" style="bg-indigo-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" text='Back' />
       </div>
@@ -163,6 +171,8 @@ useEffect(() => {
         </div>)}
       </div>
     </div>
+    </>)}
+    </>
   );
 };
 

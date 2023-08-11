@@ -7,6 +7,7 @@ import { DeleteMessageDTO } from '@/src/dtos/message/DeleteMessageDTO';
 import { EditMessageDTO } from '@/src/dtos/message/EditMessageDTO';
 import { FetchChatIdDTO } from '@/src/dtos/message/FetchChatIdDTO';
 import socket from '@/src/services/socket';
+import { useAuth } from '../auth';
 
 interface MessageContextData {
     messages?: {message: MessageEntity, owner: string}[];
@@ -29,7 +30,7 @@ const MessageProvider = ({children}: any) => {
   return []
        }
        const response = await api.get<{message: MessageEntity, owner: string}[]>(`/messages/${chat_id}`)
-       console.log('mensagens', response.data)
+       console.log('mensagens', response)
        setMessages(response.data);
        return response.data;
     }, [messages, chatId, socket]);
@@ -50,7 +51,6 @@ const MessageProvider = ({children}: any) => {
     const handleEditMessage = useCallback(async(data: EditMessageDTO) => {
         const response = await api.post(`/join/${data.chat_id}`)
     }, []);
-
     return (
         <MessageContext.Provider value={{ messages, chatId, fetchChatId: handleFetchChatId, createMessage: handleCreateMessage, editMessage: handleEditMessage, deleteMessage: handleDeleteMessage, listMessagesByChat: messagesByChat }}>{children}</MessageContext.Provider>
     );

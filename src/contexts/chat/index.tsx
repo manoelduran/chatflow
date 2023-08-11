@@ -18,7 +18,6 @@ const ChatProvider = ({children}: any) => {
 
     const chatList = useCallback(async () => {
         const response = await api.get<{chat: ChatEntity, totalUsers: number,owner: string}[]>("/chats")
-        console.log('response', response)
         setChats(response.data.value);
         return response.data.value
     }, []);

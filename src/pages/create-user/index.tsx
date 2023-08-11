@@ -38,7 +38,6 @@ const CreateUser: React.FC = () => {
      console.log('error', error)
      if (error instanceof Yup.ValidationError) {
       const errors = getValidationErrors(error);
-      console.log('errors', errors)
       formRef.current?.setErrors(errors);
       toast.error("Try again!", {
         position: "top-right",

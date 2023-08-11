@@ -17,8 +17,7 @@ const Chats: React.FC = () => {
   const handleEnterChat = useCallback(async (chat_id: string | undefined) => {
     if (chat_id) {
       fetchChatId({ chat_id })
-      const ok = await joinChat({chat_id})
-      console.log('ok', ok)
+      await joinChat({chat_id})
       join({ chat_id, user })
       router.push(`/chat/${chat_id}`);
     }
@@ -28,7 +27,6 @@ const Chats: React.FC = () => {
     if (!chats) {
       return []
     }
-    console.log('chats', chats)
     return chats
   }, [chats, user])
 
