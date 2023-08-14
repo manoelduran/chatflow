@@ -67,7 +67,7 @@ const AuthProvider = ({ children }: any) => {
                 user:  response?.data?.value ,
             });
         } catch (error: any) {
-            if(error?.response?.status === 401) {
+            if(error?.response?.status === 401 || error.message === 'Invalid token specified') {
                 handleSignOut();
                 router.push('/')
             }

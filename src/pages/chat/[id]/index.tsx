@@ -100,7 +100,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
       console.log("arg da msg", arg)
       listMessagesByChat({chat_id: chat.id as string})
   })
-  }, [])
+  }, [socket])
 useEffect(() => {
   if (typeof window !== 'undefined' && list !== undefined) {
     

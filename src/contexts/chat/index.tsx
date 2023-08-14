@@ -3,6 +3,7 @@ import { api } from '@/src/services/api';
 import { ChatEntity } from '@/src/dtos/chat/ChatEntity';
 import { CreateChatDTO } from '@/src/dtos/chat/CreateChatDTO';
 import { JoinChatDTO } from '@/src/dtos/chat/JoinChatDTO';
+import { useAuth } from '../auth';
 
 interface ChatContextData {
     chats?: {chat: ChatEntity, totalUsers: number, owner: string}[];
@@ -15,7 +16,6 @@ const ChatContext = createContext<ChatContextData>({} as ChatContextData);
 
 const ChatProvider = ({children}: any) => {
     const [chats, setChats] = useState<{chat: ChatEntity, totalUsers: number, owner: string}[]>([] as {chat: ChatEntity, totalUsers: number,owner: string}[]);
-
     const chatList = useCallback(async () => {
         const response = await api.get<{chat: ChatEntity, totalUsers: number,owner: string}[]>("/chats")
         setChats(response.data.value);
@@ -28,7 +28,9 @@ const ChatProvider = ({children}: any) => {
     const handleJoinChat = useCallback(async(data: JoinChatDTO) => {
          await api.post(`/chats/join/${data.chat_id}`)
     }, []);
- useEffect(() => {chatList()}, [])
+ useEffect(() => {
+        chatList()
+ }, [])
     return (
         <ChatContext.Provider value={{ chats, createChat: handleCreateChat, joinChat: handleJoinChat, chatList }}>{children}</ChatContext.Provider>
     );

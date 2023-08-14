@@ -1,12 +1,10 @@
+import { CreateChatDTO } from '@/src/dtos/chat/CreateChatDTO';
 import * as Yup from 'yup';
 
-interface formCredentials {
-  text: string;
-  }
 
-export const canCreateChat = async (data: formCredentials): Promise<void> => {
+export const canCreateChat = async (data: CreateChatDTO): Promise<void> => {
     const schema = Yup.object().shape({
-        text: Yup.string().required('chat name is required!'),
+        text: Yup.string().max(11).required('chat name is required!'),
       });
       await schema.validate(data, {
         abortEarly: false,

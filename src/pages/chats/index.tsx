@@ -5,7 +5,7 @@ import { useChat } from '@/src/contexts/chat';
 import { useMessage } from '@/src/contexts/message';
 import { useSocket } from '@/src/contexts/socket';
 import { useRouter } from 'next/router';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 const Chats: React.FC = () => {
   const { join } = useSocket();
