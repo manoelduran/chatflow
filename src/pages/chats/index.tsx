@@ -29,7 +29,7 @@ const Chats: React.FC = () => {
     }
     return chats
   }, [chats, user])
-
+useEffect(() => {}, [])
   return (
     <div className="w-full overflow-y-auto max-h-screen px-10 py-10 flex flex-col items-center">
       <div className="w-full h-100 flex items-start justify-between">
