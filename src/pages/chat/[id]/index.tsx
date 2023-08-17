@@ -53,14 +53,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
       } 
     } catch (error: any) {
       console.log('error', error)
-      if (error instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(error);
 
-        formRef.current?.setErrors(errors);
-
-        return;
-      }
-      
       if(error?.response?.status === 401) {
         signOut();
       }
