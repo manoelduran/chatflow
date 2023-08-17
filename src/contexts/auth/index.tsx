@@ -16,7 +16,7 @@ interface TokenData {
     email: string;
 }
 interface AuthContextData {
-    user: AuthDTO;
+    user: AuthDTO | undefined;
     loading: boolean;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>
     signIn: (data: SignInDTO) => Promise<AuthDTO>;
@@ -60,14 +60,14 @@ const AuthProvider = ({ children }: any) => {
                 api.defaults.headers.Authorization = `Bearer ${accessToken}`;
             }
 
-            const response = await api.get<UserEntity>(`users/show/${owner_id}`);
-
+            const response = await api.get(`users/show/${owner_id}`);
+            console.log('response ponto data', response.data)
             setAuthUser({
                 token: accessToken as string,
-                user:  response?.data?.value ,
+                user:  response?.data,
             });
         } catch (error: any) {
-            if(error?.response?.status === 401 || error.message === 'Invalid token specified') {
+            if(error?.response?.status === 401 ) {
                 handleSignOut();
                 router.push('/')
             }
@@ -76,11 +76,12 @@ const AuthProvider = ({ children }: any) => {
 
     const handleSignIn = useCallback(async (data: SignInDTO) => {
         const response = await api.post("/users/auth", data)
+        console.log('AUTH', response.data)
         localStorage.setItem("@Chatflow:Token", JSON.stringify(response.data.value.token))
         localStorage.setItem('@Chatflow:refreshToken', JSON.stringify(response.data.value.refreshToken))
         api.defaults.headers.Authorization = `Bearer ${response.data.value.token}`;
         setAuthUser(response.data.value);
-  
+        console.log('response', response.data.value)
         return response.data.value
     }, []);
     const handleSignOut = useCallback(() => {

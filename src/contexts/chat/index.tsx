@@ -17,9 +17,10 @@ const ChatContext = createContext<ChatContextData>({} as ChatContextData);
 const ChatProvider = ({children}: any) => {
     const [chats, setChats] = useState<{chat: ChatEntity, totalUsers: number, owner: string}[]>([] as {chat: ChatEntity, totalUsers: number,owner: string}[]);
     const chatList = useCallback(async () => {
-        const response = await api.get<{chat: ChatEntity, totalUsers: number,owner: string}[]>("/chats")
+        const response = await api.get("/chats")
         setChats(response.data.value);
-        return response.data.value
+        console.log('CHATS', response.data)
+        return response.data.value as {chat: ChatEntity, totalUsers: number,owner: string}[]
     }, []);
     const handleCreateChat = useCallback(async ({name, token}: CreateChatDTO) => {
          await api.post("/chats", {name: name}, {headers: {Authorization: `Baerer ${token}`}})

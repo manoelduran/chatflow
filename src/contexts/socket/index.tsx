@@ -13,7 +13,7 @@ interface SocketContextData {
 
 const SocketContext = createContext<SocketContextData>({} as SocketContextData);
 
-const SocketProvider = ({children}) => {
+const SocketProvider = ({children}: any) => {
 
     const [socket, setSocket] = useState<Socket>();
 
@@ -27,17 +27,14 @@ const SocketProvider = ({children}) => {
         socketio.emit("message", data)
     }, []);
     const handleCreateRoom = useCallback((data: any) => {
-        console.log("data", data)
+        console.log("data do create", data)
         socketio.emit("create-room", data)
-        
             socketio.on("created", (arg) => {
-                
                 console.log("arg", arg)
             })
-        
     }, []);
     const handleJoinRoom = useCallback((data: any) => {
-        console.log("data", data)
+        console.log("data do join", data)
        const ok = socketio.emit("join-room", data)
         if(ok) {
             socketio.on("joined", (arg) => {

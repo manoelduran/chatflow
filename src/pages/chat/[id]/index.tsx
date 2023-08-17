@@ -37,7 +37,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
   const handleSendMessage = useCallback(async (data: FormCredentials) => {
     setSending(true)
     try {
-      formRef.current?.setErrors([]);
+      formRef.current?.setErrors([] as never);
       await canCreateMessage(data)
    
 
@@ -52,7 +52,7 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
         await createMessage(parsedData)
         message(parsedData)
       } 
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error)
       if (error instanceof Yup.ValidationError) {
         const errors = getValidationErrors(error);
@@ -64,7 +64,6 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
       
       if(error?.response?.status === 401) {
         signOut();
-
       }
       setSending(false)
     } finally {
@@ -75,14 +74,15 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
     if (!messages) {
       return []
     }
-    return messages?.value?.map(({message, owner}: {message: MessageEntity, owner: string}) => {
+    console.log('messages', messages)
+    return messages?.map(({message, owner}: {message: MessageEntity, owner: string}) => {
    
       return {
         ...message,
         myMessage: message.userId === user?.user?.id && message.text,
         owner: owner,
         othersMessages: message.userId !== user?.user?.id && message.text,
-        formattedSendAt: format(new Date(message?.sentAt), 'HH:mm')
+        formattedSendAt: format(new Date(message?.sentAt as Date), 'HH:mm')
       }
     })
   }, [messages, user, loading])
@@ -117,6 +117,7 @@ useEffect(() => {
 
 }, [list])
 useEffect(() => {
+  console.log('user', user)
       if(!user) {
         load()
         setLoading(false)
@@ -135,7 +136,7 @@ useEffect(() => {
         id='messageContainer'
           className="w-full max-h-64 overflow-y-auto bg-gray-200 p-4 mb-4"
         >
-          {list && user && list?.map((message , index) => (
+          {list && user && list?.map((message: any) => (
             <>
               {message.userId === user?.user?.id ? (
                 <div id='messageContainer'  key={message.id} className="w-full h-fit  align-middle flex justify-end  mb-4">
@@ -178,7 +179,7 @@ useEffect(() => {
 
 
 export const getServerSideProps: GetServerSideProps = async context => {
-  const chat_id = context.params.id as ParsedUrlQuery | undefined;
+  const chat_id = context?.params?.id as ParsedUrlQuery | undefined;
   console.log("chaaaat id ", chat_id)
   try {
 

@@ -21,7 +21,7 @@ const CreateUser: React.FC = () => {
   const handleSignUp = useCallback(async (data: SignUpDTO) => {
     setLoading(true)
     try {
-      formRef.current?.setErrors([]);
+      formRef.current?.setErrors([] as never);
       await canCreateUser(data)
       await signUp({ email: data.email, password: data.password, username: data.username })
       toast.success("User created successfully!", {

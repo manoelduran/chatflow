@@ -29,10 +29,10 @@ const MessageProvider = ({children}: any) => {
        if(!chat_id) {
   return []
        }
-       const response = await api.get<{message: MessageEntity, owner: string}[]>(`/messages/${chat_id}`)
-       console.log('mensagens', response)
-       setMessages(response.data);
-       return response.data;
+       const response = await api.get(`/messages/${chat_id}`)
+       console.log('mensagens', response.data)
+       setMessages(response.data.value as {message: MessageEntity, owner: string}[]);
+       return response.data.value as {message: MessageEntity, owner: string}[];
     }, [messages, chatId, socket]);
     const handleFetchChatId = useCallback(async (data: FetchChatIdDTO) => {
         if(data.chat_id) {

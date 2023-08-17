@@ -12,7 +12,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { canCreateChat } from './validations';
 import { useSocket } from '@/src/contexts/socket';
 import { toast } from 'react-toastify';
-interface formCredentials {
+export interface formCredentials {
   text: string;
 }
 const CreateChat: React.FC = () => {
@@ -26,10 +26,10 @@ const CreateChat: React.FC = () => {
   const handleCreateChat = useCallback(async (data: formCredentials) => {
     setLoading(true)
     try {
-      formRef.current?.setErrors([]);
+      formRef.current?.setErrors([] as never);
       await canCreateChat(data)
-      console.log('user token', user.token)
-      await createChat({ name: data.text, token: user.token as string })
+      console.log('user token', user?.token as string)
+      await createChat({ name: data.text, token: user?.token as string })
       toast.success("Chat created successfully!", {
         position: "top-right",
         autoClose: 5000,
