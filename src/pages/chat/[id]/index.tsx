@@ -15,9 +15,8 @@ import { format } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { canCreateMessage } from './validations';
+import  canCreateMessage  from './validations';
 import getValidationErrors from '@/src/utils/getValidationErrors';
-import { useRouter } from 'next/router';
 
 type ChatProps = {
   chat: ChatEntity;

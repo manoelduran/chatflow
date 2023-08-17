@@ -4,7 +4,7 @@ interface FormCredentials {
   text: string;
 }
 
-export const canCreateMessage = async (data: FormCredentials): Promise<void> => {
+const canCreateMessage = async (data: FormCredentials): Promise<void> => {
     const schema = Yup.object().shape({
         text: Yup.string().required('A message is required!'),
       });
@@ -12,3 +12,5 @@ export const canCreateMessage = async (data: FormCredentials): Promise<void> => 
         abortEarly: false,
       });
 }
+
+export default canCreateMessage;

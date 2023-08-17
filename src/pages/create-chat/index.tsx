@@ -9,7 +9,7 @@ import { Form } from '@unform/web';
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from 'next/router';
 import React, { useCallback, useRef, useState } from 'react';
-import { canCreateChat } from './validations';
+import  canCreateChat  from './validations';
 import { useSocket } from '@/src/contexts/socket';
 import { toast } from 'react-toastify';
 export interface formCredentials {

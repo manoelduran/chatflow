@@ -1,7 +1,7 @@
 import { SignUpDTO } from '@/src/dtos/user/SignUpDTO';
 import * as Yup from 'yup';
 
-export const canCreateUser = async (data: SignUpDTO): Promise<void> => {
+ const canCreateUser = async (data: SignUpDTO): Promise<void> => {
     const schema = Yup.object().shape({
         username: Yup.string().required('username required!'),
         email: Yup.string().email().required('email required!'),
@@ -11,3 +11,5 @@ export const canCreateUser = async (data: SignUpDTO): Promise<void> => {
         abortEarly: false,
       });
 }
+
+export default canCreateUser;
