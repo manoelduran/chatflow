@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { formCredentials } from '../index';
+import { formCredentials } from '../pages/create-chat';
 
 
 const canCreateChat = async (data: formCredentials): Promise<void> => {

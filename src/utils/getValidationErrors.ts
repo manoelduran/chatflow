@@ -5,7 +5,7 @@ interface Errors {
 }
 
 export default function getValidationErrors(err: ValidationError): Errors {
-  const validationErrors: Errors = [] as any;
+  const validationErrors: Errors = {};
 
   err.inner.forEach(error => {
     console.log('error 31231', error)

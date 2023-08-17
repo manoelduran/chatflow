@@ -8,9 +8,9 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import { useRouter } from 'next/router';
 import React, { useCallback, useRef, useState } from 'react';
-import  canCreateUser  from './validations';
 import getValidationErrors from '@/src/utils/getValidationErrors';
 import { toast } from 'react-toastify';
+import canCreateUser from '@/src/validations/canCreateUser';
 
 const CreateUser: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
