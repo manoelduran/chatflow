@@ -1,6 +1,5 @@
 import AnimatedButton from '@/src/components/AnimatedButton';
 import { Input } from '@/src/components/Input';
-import * as Yup from 'yup';
 import LoadingAnimation from '@/src/components/LoadingAnimation';
 import { useAuth } from '@/src/contexts/auth';
 import { useMessage } from '@/src/contexts/message';
@@ -15,8 +14,6 @@ import { format } from 'date-fns';
 import { GetServerSideProps, NextPage } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import  canCreateMessage  from './validations';
-import getValidationErrors from '@/src/utils/getValidationErrors';
 
 type ChatProps = {
   chat: ChatEntity;
@@ -28,7 +25,6 @@ interface FormCredentials {
 const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
   const formRef = useRef<FormHandles>(null);
   const { user, signOut , loading, setLoading, load } = useAuth()
-  
   const { messages, createMessage, listMessagesByChat } = useMessage()
   const { socket, message } = useSocket();
   const [sending, setSending] = useState(false);
@@ -37,8 +33,6 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
     setSending(true)
     try {
       formRef.current?.setErrors([] as never);
-      await canCreateMessage(data)
-   
 
       if(user) {
         const parsedData = {
@@ -47,10 +41,9 @@ const Chat: NextPage<ChatProps> = ({ chat }): JSX.Element => {
           token: user?.token
         } as CreateMessageDTO
         console.log('parsedData',parsedData)
-  
         await createMessage(parsedData)
         message(parsedData)
-      } 
+      }
     } catch (error: any) {
       console.log('error', error)
 
