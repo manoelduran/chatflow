@@ -1,6 +1,6 @@
 import socketio from 'socket.io-client';
 
-const socket = socketio("http://localhost:3333", {
+const socket = socketio(`${process.env.NEXT_PUBLIC_API_URL}`, {
     autoConnect: false,
     transports: ['websocket'],
     secure: false,
